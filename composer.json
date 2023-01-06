@@ -1,6 +1,6 @@
 {
   "name": "alireaza/laravel-request-response-with-message-bus",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "type": "library",
   "license": "MIT",
   "description": "This is a gateway to Request-Response with Message Bus for Laravel.",
