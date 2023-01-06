@@ -224,7 +224,8 @@ class RequestController extends BaseController
 
         if (Redis::exists($request_cache_prefix . $correlation_id)) {
             $time = 0;
-            $time_step = 1000000 / 16;
+            $time_step = 1000000 / 256; // = Approximately 4 milliseconds
+
             while (!Redis::exists($response_cache_prefix . $correlation_id) && $time <= ($timeout * 1000000)) {
                 $time += $time_step;
 
