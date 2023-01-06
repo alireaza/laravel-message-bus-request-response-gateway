@@ -29,7 +29,8 @@
     "laravel/framework": "^9.0",
     "alireaza/laravel-form-data": "1.0.0",
     "symfony/filesystem": "6.1.5",
-    "alireaza/laravel-message-bus-kafka": "1.0.0"
+    "alireaza/laravel-message-bus-kafka": "1.0.0",
+    "ext-redis": "*"
   },
   "autoload": {
     "psr-4": {

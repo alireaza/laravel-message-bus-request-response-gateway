@@ -8,6 +8,7 @@ use AliReaza\MessageBus\MessageInterface;
 use Exception;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Redis;
+use Redis as PHPRedis;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -223,33 +224,56 @@ class RequestController extends BaseController
         $response_cache_prefix = $config['request']['response']['cache']['prefix'];
 
         if (Redis::exists($request_cache_prefix . $correlation_id)) {
-            $time = 0;
-            $time_step = 1000000 / 256; // = Approximately 4 milliseconds
+            $redis_client = Redis::client();
+            $redis_client->setOption(PHPRedis::OPT_READ_TIMEOUT, '0.85');
 
-            while (!Redis::exists($response_cache_prefix . $correlation_id) && $time <= ($timeout * 1000000)) {
-                $time += $time_step;
+            for ($t = 0; $t < $timeout; $t++) {
+                $value = null;
 
-                usleep($time_step);
-            }
+                try {
+                    Redis::subscribe([$response_cache_prefix . $correlation_id], function (string $message) use (&$value): void {
+                        $value = $message;
 
-            if (Redis::exists($response_cache_prefix . $correlation_id)) {
-                $value = Redis::get($response_cache_prefix . $correlation_id);
+                        Redis::close();
+                    });
+                } catch (Exception) {
+                    if (is_null($value)) {
+                        $time = 0;
+                        $time_step = 1000000 / 256; // = Approximately 4 milliseconds
 
-                $array = json_decode($value, true);
+                        while (!Redis::exists($response_cache_prefix . $correlation_id) && $time <= ($timeout * 100000)) {
+                            $time += $time_step;
 
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    $this->exception('json_decode error: ' . json_last_error_msg());
+                            usleep($time_step);
+                        }
+
+                        if (Redis::exists($response_cache_prefix . $correlation_id)) {
+                            $value = Redis::get($response_cache_prefix . $correlation_id);
+                        }
+                    }
                 }
 
-                return new Message(
-                    content: $array['content'],
-                    causation_id: $array['causation_id'],
-                    correlation_id: $array['correlation_id'],
-                    name: $array['name'],
-                    timestamp: $array['timestamp'],
-                    message_id: $array['message_id']
-                );
+                if (!empty($value)) {
+                    break;
+                }
             }
+
+            if (empty($value)) return null;
+
+            $array = json_decode($value, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $this->exception('json_decode error: ' . json_last_error_msg());
+            }
+
+            return new Message(
+                content: $array['content'],
+                causation_id: $array['causation_id'],
+                correlation_id: $array['correlation_id'],
+                name: $array['name'],
+                timestamp: $array['timestamp'],
+                message_id: $array['message_id']
+            );
         }
 
         return null;

@@ -31,5 +31,7 @@ class StoreGatewayResponseMessageToRedisHandler implements HandlerInterface
         Redis::expire($this->request_cache_prefix . $correlation_id, $this->request_cache_expire);
 
         Redis::set($this->response_cache_prefix . $correlation_id, (string)$message, 'EX', $this->response_cache_expire);
+
+        Redis::publish($this->response_cache_prefix . $correlation_id, (string)$message);
     }
 }
