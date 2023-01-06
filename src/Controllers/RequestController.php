@@ -220,20 +220,21 @@ class RequestController extends BaseController
         $config = $this->getConfig();
 
         $request_cache_prefix = $config['request']['cache']['prefix'];
-        $response_cache_prefix = $config['request']['response']['cache']['prefix'];
 
         if (Redis::exists($request_cache_prefix . $correlation_id)) {
             $time = 0;
             $time_step = 1000000 / 256; // = Approximately 4 milliseconds
 
-            while (!Redis::exists($response_cache_prefix . $correlation_id) && $time <= ($timeout * 1000000)) {
-                $time += $time_step;
+            do {
+                $value = Redis::get($request_cache_prefix . $correlation_id);
 
-                usleep($time_step);
-            }
+                if (empty($value)) {
+                    $time += $time_step;
 
-            if (Redis::exists($response_cache_prefix . $correlation_id)) {
-                $value = Redis::get($response_cache_prefix . $correlation_id);
+                    usleep($time_step);
+
+                    continue;
+                }
 
                 $array = json_decode($value, true);
 
@@ -249,7 +250,7 @@ class RequestController extends BaseController
                     timestamp: $array['timestamp'],
                     message_id: $array['message_id']
                 );
-            }
+            } while ($time <= ($timeout * 1000000));
         }
 
         return null;
@@ -275,7 +276,7 @@ class RequestController extends BaseController
 
         $config = $this->getConfig();
 
-        $response_cache_prefix = $config['request']['response']['cache']['prefix'];
+        $request_cache_prefix = $config['request']['cache']['prefix'];
 
         $request_message_name = $config['request']['message']['name'];
         $response_message_name = $config['request']['response']['message']['name'];
@@ -284,7 +285,7 @@ class RequestController extends BaseController
         $response->setContent(null);
         $response->setStatusCode(Response::HTTP_NO_CONTENT);
         $response->headers->set('X-Correlation-ID', $correlation_id);
-        $response->headers->set('Expires', Redis::ttl($response_cache_prefix . $correlation_id));
+        $response->headers->set('Expires', Redis::ttl($request_cache_prefix . $correlation_id));
 
         switch ($message->getName()) {
             case $request_message_name:

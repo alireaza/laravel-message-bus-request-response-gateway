@@ -10,8 +10,6 @@ class StoreGatewayResponseMessageToRedisHandler implements HandlerInterface
 {
     private string $request_cache_prefix;
     private string $request_cache_expire;
-    private string $response_cache_prefix;
-    private string $response_cache_expire;
 
     public function __construct()
     {
@@ -19,9 +17,6 @@ class StoreGatewayResponseMessageToRedisHandler implements HandlerInterface
 
         $this->request_cache_prefix = $config['request']['cache']['prefix'];
         $this->request_cache_expire = $config['request']['cache']['expire_sec'];
-
-        $this->response_cache_prefix = $config['request']['response']['cache']['prefix'];
-        $this->response_cache_expire = $config['request']['response']['cache']['expire_sec'];
     }
 
     public function __invoke(MessageInterface $message): void
@@ -30,6 +25,6 @@ class StoreGatewayResponseMessageToRedisHandler implements HandlerInterface
 
         Redis::expire($this->request_cache_prefix . $correlation_id, $this->request_cache_expire);
 
-        Redis::set($this->response_cache_prefix . $correlation_id, (string)$message, 'EX', $this->response_cache_expire);
+        Redis::set($this->request_cache_prefix . $correlation_id, (string)$message, 'EX', $this->request_cache_expire);
     }
 }
