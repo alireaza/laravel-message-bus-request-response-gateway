@@ -1,6 +1,6 @@
 <?php
 
-namespace AliReaza\Laravel\Gateway\Handlers;
+namespace AliReaza\Laravel\MessageBus\RequestResponseGateway\Handlers;
 
 use AliReaza\MessageBus\HandlerInterface;
 use AliReaza\MessageBus\MessageInterface;

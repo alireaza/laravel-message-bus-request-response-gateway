@@ -1,13 +1,13 @@
 <?php
 
-namespace AliReaza\Laravel\Gateway;
+namespace AliReaza\Laravel\MessageBus\RequestResponseGateway;
 
 use Illuminate\Support\ServiceProvider;
 use AliReaza\Laravel\MessageBus\Kafka\Events\MessageCreated;
 use AliReaza\Laravel\MessageBus\Kafka\Listeners\DispatchMessageToKafka;
-use AliReaza\Laravel\Gateway\Commands\HandleGatewayResponseMessageFromKafkaCommand;
+use AliReaza\Laravel\MessageBus\RequestResponseGateway\Commands\HandleGatewayResponseMessageFromKafkaCommand;
 
-class LaravelRequestResponseWithMessageBusServiceProvider extends ServiceProvider
+class RequestResponseGatewayServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap services.

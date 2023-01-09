@@ -1,8 +1,8 @@
 <?php
 
-namespace AliReaza\Laravel\Gateway\Commands;
+namespace AliReaza\Laravel\MessageBus\RequestResponseGateway\Commands;
 
-use AliReaza\Laravel\Gateway\Handlers\StoreGatewayResponseMessageToRedisHandler;
+use AliReaza\Laravel\MessageBus\RequestResponseGateway\Handlers\StoreGatewayResponseMessageToRedisHandler;
 use AliReaza\Laravel\MessageBus\Kafka\Commands\KafkaMessagesHandlerCommand;
 use AliReaza\MessageBus\Kafka\Helper as KafkaHelper;
 use AliReaza\MessageBus\Message;
@@ -65,7 +65,7 @@ class HandleGatewayResponseMessageFromKafkaCommand extends KafkaMessagesHandlerC
         return new Message(name: $name);
     }
 
-    public function getHandlers(MessageInterface $message): iterable
+    protected function getHandlers(MessageInterface $message): iterable
     {
         if (empty($message->getName())) {
             return [];

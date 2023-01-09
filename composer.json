@@ -1,16 +1,16 @@
 {
-  "name": "alireaza/laravel-request-response-with-message-bus",
-  "version": "1.1.0",
+  "name": "alireaza/laravel-message-bus-request-response-gateway",
+  "version": "1.2.0",
   "type": "library",
   "license": "MIT",
-  "description": "This is a gateway to Request-Response with Message Bus for Laravel.",
+  "description": "This is a Request-Response Gateway for Laravel Message Bus.",
   "keywords": [
     "alireaza",
     "Gateway",
     "Request-Response",
     "Message-Bus"
   ],
-  "homepage": "https://gitlab.com/alireaza/laravel-request-response-with-message-bus",
+  "homepage": "https://gitlab.com/alireaza/laravel-message-bus-request-response-gateway",
   "authors": [
     {
       "name": "Mohammad Ali Ghorbani Delijani",
@@ -33,13 +33,13 @@
   },
   "autoload": {
     "psr-4": {
-      "AliReaza\\Laravel\\Gateway\\": "src/"
+      "AliReaza\\Laravel\\MessageBus\\RequestResponseGateway\\": "src/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "AliReaza\\Laravel\\Gateway\\LaravelRequestResponseWithMessageBusServiceProvider"
+        "AliReaza\\Laravel\\MessageBus\\RequestResponseGateway\\RequestResponseGatewayServiceProvider"
       ]
     }
   }
