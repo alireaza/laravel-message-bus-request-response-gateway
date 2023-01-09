@@ -1,11 +1,11 @@
-# Request-Response with Message bus for Laravel
+# Request-Response Gateway for Laravel Message Bus
 
 
 ## Install
 
 Via Composer
 ```bash
-$ composer require alireaza/laravel-request-response-with-message-bus
+$ composer require alireaza/laravel-message-bus-request-response-gateway
 ```
 
 

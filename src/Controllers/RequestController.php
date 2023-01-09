@@ -1,6 +1,6 @@
 <?php
 
-namespace AliReaza\Laravel\Gateway\Controllers;
+namespace AliReaza\Laravel\MessageBus\RequestResponseGateway\Controllers;
 
 use AliReaza\Laravel\MessageBus\Kafka\Events\MessageCreated;
 use AliReaza\MessageBus\Message;
